@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, send_from_directory
 import json
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -25,15 +26,18 @@ def post_data():
     print(sensor_data)
 
     global entry_counter
-    # add an entry to sensor_data.json
+    
     # Load the existing data from the JSON file
     with open('sensor_data.json', 'r') as file:
         data = json.load(file)
     
-    # Add the new key-value pair
-    data[entry_counter] = sensor_data
+    # add the new entry and the time 
+    data[entry_counter] = {
+        'timestamp': datetime.now().isoformat(),
+        'data': sensor_data
+    }
     
-    # Save the updated data back to the JSON file
+    
     with open('sensor_data.json', 'w') as file:
         json.dump(data, file, indent=4)
 
@@ -65,9 +69,23 @@ def download_image():
     except FileNotFoundError:
         return "File not found", 404
     
-@app.route('/complete_log', methods=['GET'])
-def get_complete_log():
-    return "Complete log"
+
+
+@app.route('/get-log', methods=['GET'])
+def get_log():
+    # return the entirety of sensor_data.json
+    with open('sensor_data.json', 'r') as file:
+        data = json.load(file)
+
+    return jsonify(data)
+
+@app.route('/clear-log', methods=['DELETE'])
+def clear_log():
+    # clear the contents of sensor_data.json
+    with open('sensor_data.json', 'w') as file:
+        json.dump({}, file)
+
+    return "Log cleared"
 
 
 if __name__ == '__main__':

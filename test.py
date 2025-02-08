@@ -40,7 +40,17 @@ def test_download_image():
         img.write(response.content)
         print("Image downloaded successfully")
 
+# test getting the log 5
+def test_get_log():
+    url = "http://localhost:5000/get-log"
+    response = requests.get(url)
+    print(response.text)
 
+
+def test_clear_log():
+    url = "http://localhost:5000/clear-log"
+    response = requests.delete(url)
+    print(response.text)
 
 if __name__ == '__main__':
     #test_get()
@@ -60,3 +70,7 @@ while True:
         test_post_image()
     elif test_to_run == 4:
         test_download_image()
+    elif test_to_run == 5:
+        test_get_log()
+    elif test_to_run == 6:
+        test_clear_log()
